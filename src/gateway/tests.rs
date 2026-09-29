@@ -1,5 +1,9 @@
 //! Gateway tests against a fake in-process gateway. No Discord involved.
 
+// Tests use `.expect()` for concise setup failures; the
+// no-expect rule applies to production code only.
+#![allow(clippy::expect_used)]
+
 use super::*;
 use std::sync::Mutex as StdMutex;
 use tokio::net::TcpListener;

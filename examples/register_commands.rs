@@ -11,6 +11,10 @@
 //! from Discord too. Global commands take up to an hour to propagate; use
 //! guild commands during development.
 
+// The example is a one-shot operator script; `.expect()` keeps it readable.
+// The no-expect rule applies to library code.
+#![allow(clippy::expect_used)]
+
 use autumn_plugin_discord::{API_BASE, Command, DiscordClient, DiscordConfig};
 
 fn commands() -> Vec<Command> {

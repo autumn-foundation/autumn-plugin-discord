@@ -1,5 +1,9 @@
 //! REST client tests. No network: a local TCP stub stands in for Discord.
 
+// Tests use `.expect()` for concise setup failures; the
+// no-expect rule applies to production code only.
+#![allow(clippy::expect_used, clippy::panic)]
+
 use super::*;
 use std::io::{Read, Write};
 use std::net::TcpListener;

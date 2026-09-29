@@ -3,6 +3,10 @@
 //! These test the builder surface and runtime assembly without booting an
 //! Autumn app: no config files, no network, no secrets.
 
+// Tests use `.expect()` for concise setup failures; the
+// no-expect rule applies to production code only.
+#![allow(clippy::expect_used)]
+
 use super::*;
 use crate::types::{InteractionResponse, MessagePayload};
 

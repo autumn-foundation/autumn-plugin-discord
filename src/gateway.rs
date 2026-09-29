@@ -64,11 +64,21 @@ impl GatewayClient {
     /// Connect and run forever, reconnecting with a fresh session on drops.
     ///
     /// Only returns when the gateway closes the connection cleanly.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Gateway`] when the connection fails and cannot
+    /// recover.
     pub async fn run<H: EventHandler>(&self, handler: &H) -> Result<()> {
         self.run_with_url(GATEWAY_URL, handler).await
     }
 
     /// [`run`](Self::run) against a custom gateway URL (tests, proxies).
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Gateway`] when the connection fails and cannot
+    /// recover.
     pub async fn run_with_url<H: EventHandler>(&self, url: &str, handler: &H) -> Result<()> {
         loop {
             let closed = self.connect_once(url, handler).await?;
@@ -103,6 +113,7 @@ impl GatewayClient {
                 ))
                 .await
                 .map_err(|err| Error::Gateway(format!("identify failed: {err}")))?;
+            drop(guard);
         }
 
         // Heartbeat on the negotiated interval.
@@ -143,7 +154,7 @@ impl GatewayClient {
                             }
                         }
                         // 7 = Reconnect, 9 = Invalid session: start over.
-                        Some(7) | Some(9) => break,
+                        Some(7 | 9) => break,
                         // 1 = heartbeat request: answer at once.
                         Some(1) => {
                             let payload = heartbeat_payload(seq.load(Ordering::SeqCst));

@@ -19,6 +19,11 @@ pub const SIGNATURE_HEADER: &str = "x-signature-ed25519";
 pub const TIMESTAMP_HEADER: &str = "x-signature-timestamp";
 
 /// Parse a 64-char hex application public key into a [`VerifyingKey`].
+///
+/// # Errors
+///
+/// Returns [`Error::Signature`] when the hex is malformed or the bytes are
+/// not a valid Ed25519 key.
 pub fn public_key_from_hex(hex_key: &str) -> Result<VerifyingKey> {
     let bytes = hex::decode(hex_key.trim())
         .map_err(|_| Error::Signature("public key is not valid hex".to_owned()))?;
@@ -34,6 +39,11 @@ pub fn public_key_from_hex(hex_key: &str) -> Result<VerifyingKey> {
 /// `signature_hex` and `timestamp` are the raw header values, `body` is the
 /// exact request body bytes Discord sent. The signed message is
 /// `timestamp + body`.
+///
+/// # Errors
+///
+/// Returns [`Error::Signature`] when a header is missing, when the
+/// signature hex is malformed, or when verification fails.
 pub fn verify_interaction(
     public_key: &VerifyingKey,
     signature_hex: Option<&str>,

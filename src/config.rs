@@ -65,20 +65,25 @@ impl DiscordConfig {
     ///
     /// A `bot_token` key inside `[discord]` is ignored on purpose: the token
     /// must come from the environment.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Config`] when the config file exists but is not
+    /// valid TOML.
     pub fn load() -> Result<Self> {
         let mut config = Self::new();
         if let Some(table) = read_section_table()? {
             if let Some(value) = table.get("application_id").and_then(|v| v.as_str()) {
-                config.application_id = value.to_owned();
+                value.clone_into(&mut config.application_id);
             }
             if let Some(value) = table.get("public_key").and_then(|v| v.as_str()) {
-                config.public_key = value.to_owned();
+                value.clone_into(&mut config.public_key);
             }
         }
-        if let Ok(token) = std::env::var(BOT_TOKEN_ENV_VAR) {
-            if !token.trim().is_empty() {
-                config.bot_token = Some(token);
-            }
+        if let Ok(token) = std::env::var(BOT_TOKEN_ENV_VAR)
+            && !token.trim().is_empty()
+        {
+            config.bot_token = Some(token);
         }
         Ok(config)
     }
@@ -106,6 +111,11 @@ impl DiscordConfig {
     ///
     /// Returns the first problem found: a missing application id, a missing
     /// or malformed public key, or a missing bot token.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Config`] describing the first missing or
+    /// malformed field.
     pub fn validate(&self) -> Result<()> {
         if self.application_id.trim().is_empty() {
             return Err(Error::Config(
@@ -142,9 +152,8 @@ impl DiscordConfig {
 /// return the parsed `[discord]` table, when the file and section exist.
 fn read_section_table() -> Result<Option<toml::Table>> {
     let path = config_file_path();
-    let contents = match std::fs::read_to_string(&path) {
-        Ok(contents) => contents,
-        Err(_) => return Ok(None),
+    let Ok(contents) = std::fs::read_to_string(&path) else {
+        return Ok(None);
     };
     let table: toml::Table = toml::from_str(&contents)
         .map_err(|err| Error::Config(format!("invalid {}: {err}", path.display())))?;

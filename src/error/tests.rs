@@ -1,5 +1,9 @@
 //! Error kind mapping tests.
 
+// Tests use `.expect()` for concise setup failures; the
+// no-expect rule applies to production code only.
+#![allow(clippy::expect_used)]
+
 use super::*;
 
 #[test]

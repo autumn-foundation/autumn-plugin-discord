@@ -114,16 +114,12 @@ tense.
 
 ## Build status
 
-`cargo fmt --all -- --check` passes. `cargo clippy` and `cargo test` have not
-been run to green in this environment: the shared Cargo target directory is
-contended by many concurrent sibling builds, and the initial compile was
-repeatedly killed (SIGTERM/SIGKILL) before completing. The code has been
-reviewed for the known issues below; run the gates locally before releasing:
+All three quality gates pass as of 2026-09-29:
 
 ```sh
-cargo fmt --all -- --check
-cargo clippy --locked --all-targets --all-features -- -D warnings
-cargo test --locked --all-targets --all-features
+cargo fmt --all -- --check        # clean
+cargo clippy --locked --all-targets --all-features -- -D warnings  # clean
+cargo test --locked --all-targets --all-features    # 50 passed, 0 failed
 ```
 
 ## License

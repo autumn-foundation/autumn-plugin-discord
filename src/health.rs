@@ -20,11 +20,15 @@ pub struct DiscordHealth {
 impl DiscordHealth {
     /// Build the indicator around a REST client.
     #[must_use]
-    pub fn new(client: DiscordClient) -> Self {
+    pub const fn new(client: DiscordClient) -> Self {
         Self { client }
     }
 
     /// Run the check directly: `Ok` carries the application name.
+    ///
+    /// # Errors
+    ///
+    /// Returns the Discord client error when the token check fails.
     pub async fn check_now(&self) -> crate::error::Result<String> {
         self.client.check_token().await.map(|info| info.name)
     }

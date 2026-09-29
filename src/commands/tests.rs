@@ -1,5 +1,9 @@
 //! Command declaration and dispatch tests.
 
+// Tests use `.expect()` for concise setup failures; the
+// no-expect rule applies to production code only.
+#![allow(clippy::expect_used)]
+
 use super::*;
 use crate::types::{InteractionType, MessagePayload};
 use proptest::prelude::*;
@@ -46,7 +50,7 @@ async fn dispatch_routes_to_the_right_handler() {
         .expect("valid command registers");
     registry
         .register(
-            Command::new("echo", "Echoes back").handler(|ctx| async move {
+            Command::new("echo", "Echoes back").handler(|ctx: CommandContext| async move {
                 let name = ctx.command_name().unwrap_or("?").to_owned();
                 Ok(InteractionResponse::channel_message(
                     MessagePayload::content(format!("echo:{name}")),
@@ -111,11 +115,8 @@ fn registrations_are_sorted_and_shaped() {
             )
             .expect("registers");
     }
-    let names: Vec<&str> = registry
-        .registrations()
-        .iter()
-        .map(|r| r.name.as_str())
-        .collect();
+    let registrations = registry.registrations();
+    let names: Vec<&str> = registrations.iter().map(|r| r.name.as_str()).collect();
     assert_eq!(names, ["apple", "mango", "zebra"]);
     assert_eq!(registry.command_names(), ["apple", "mango", "zebra"]);
 }

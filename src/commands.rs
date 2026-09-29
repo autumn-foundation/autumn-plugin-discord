@@ -112,6 +112,12 @@ impl Command {
     }
 
     /// Validate the declaration against Discord's naming rules.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Config`] when the name or description breaks
+    /// Discord's rules (name: 1-32 chars of lowercase letters, digits,
+    /// `-`, `_`; description: 1-100 chars).
     pub fn validate(&self) -> Result<()> {
         if self.name.is_empty() || self.name.len() > 32 {
             return Err(Error::Config(format!(
@@ -163,6 +169,11 @@ impl CommandRegistry {
     }
 
     /// Register a command. Replaces any command with the same name.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Config`] when the command fails
+    /// [`validate`](Command::validate).
     pub fn register(&mut self, command: Command) -> Result<()> {
         command.validate()?;
         self.commands.insert(command.name.clone(), command);
@@ -190,6 +201,12 @@ impl CommandRegistry {
     ///
     /// Returns [`Error::UnknownCommand`] when no handler is registered for
     /// the command name.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`AutumnError`] when the interaction carries no command
+    /// name, when no handler is registered for it, or when the handler
+    /// itself fails.
     pub async fn dispatch(&self, ctx: CommandContext) -> AutumnResult<InteractionResponse> {
         let name = ctx
             .command_name()

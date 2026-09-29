@@ -4,6 +4,10 @@
 //! by hand and check validation and override precedence. `load()` itself is
 //! exercised only for its no-file path, which needs no secrets.
 
+// Tests use `.expect()` for concise setup failures; the
+// no-expect rule applies to production code only.
+#![allow(clippy::expect_used)]
+
 use super::*;
 
 const TEST_PUBLIC_KEY: &str = "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a";

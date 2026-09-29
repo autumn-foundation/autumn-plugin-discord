@@ -91,13 +91,11 @@ impl Error {
     #[must_use]
     pub const fn status_code(&self) -> u16 {
         match self.kind() {
-            ErrorKind::Config => 500,
-            ErrorKind::Signature => 401,
-            ErrorKind::Json => 400,
             // Upstream failures surface as 500: AutumnError has no 502
             // constructor, so `to_autumn_error` uses 500 for these.
-            ErrorKind::Http | ErrorKind::DiscordApi | ErrorKind::Gateway => 500,
-            ErrorKind::UnknownCommand => 400,
+            ErrorKind::Config | ErrorKind::Http | ErrorKind::DiscordApi | ErrorKind::Gateway => 500,
+            ErrorKind::Signature => 401,
+            ErrorKind::Json | ErrorKind::UnknownCommand => 400,
             ErrorKind::MissingRuntime => 503,
         }
     }

@@ -1,5 +1,9 @@
 //! Payload parsing tests.
 
+// Tests use `.expect()` for concise setup failures; the
+// no-expect rule applies to production code only.
+#![allow(clippy::expect_used)]
+
 use super::*;
 
 // A real-shaped application-command interaction, as Discord sends it.
@@ -69,7 +73,7 @@ fn response_serializes_to_discord_shape() {
 
 #[test]
 fn pong_has_no_data() {
-    let json = serde_json::to_value(&InteractionResponse::pong()).expect("serializes");
+    let json = serde_json::to_value(InteractionResponse::pong()).expect("serializes");
     assert_eq!(json["type"], 1);
     assert!(json.get("data").is_none());
 }

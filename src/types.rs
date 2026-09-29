@@ -23,7 +23,7 @@ pub enum InteractionType {
 }
 
 impl InteractionType {
-    fn from_code(code: u8) -> Option<Self> {
+    const fn from_code(code: u8) -> Option<Self> {
         match code {
             1 => Some(Self::Ping),
             2 => Some(Self::ApplicationCommand),
@@ -213,7 +213,7 @@ impl CommandOption {
 
     /// Mark the option as required.
     #[must_use]
-    pub fn required(mut self) -> Self {
+    pub const fn required(mut self) -> Self {
         self.required = true;
         self
     }
@@ -277,7 +277,7 @@ impl MessagePayload {
 
     /// Mark the message ephemeral (only the invoker sees it).
     #[must_use]
-    pub fn ephemeral(mut self) -> Self {
+    pub const fn ephemeral(mut self) -> Self {
         self.flags = Some(64);
         self
     }
@@ -306,7 +306,7 @@ impl InteractionResponse {
 
     /// Answer a command with a message.
     #[must_use]
-    pub fn channel_message(message: MessagePayload) -> Self {
+    pub const fn channel_message(message: MessagePayload) -> Self {
         Self {
             kind: InteractionResponseType::ChannelMessageWithSource,
             data: Some(message),
@@ -324,6 +324,9 @@ impl InteractionResponse {
 }
 
 /// Skip serializing `false` booleans.
+// Serde's `skip_serializing_if` requires `fn(&bool) -> bool`; the reference
+// is part of that contract, so the by-value lint does not apply here.
+#[allow(clippy::trivially_copy_pass_by_ref)]
 fn is_false(value: &bool) -> bool {
     !value
 }

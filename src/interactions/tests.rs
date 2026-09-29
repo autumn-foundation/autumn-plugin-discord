@@ -3,6 +3,10 @@
 //! These drive [`VerifiedInteraction::from_request`] directly with a test
 //! `AppState` — no server, no Discord.
 
+// Tests use `.expect()` for concise setup failures; the
+// no-expect rule applies to production code only.
+#![allow(clippy::expect_used)]
+
 use super::*;
 use crate::verify::public_key_from_hex;
 use autumn_web::reexports::axum::body::Body;

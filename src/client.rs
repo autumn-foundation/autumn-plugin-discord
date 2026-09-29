@@ -53,6 +53,11 @@ impl std::fmt::Debug for DiscordClient {
 impl DiscordClient {
     /// Build a client. The base URL defaults to [`API_BASE`]; pass a custom
     /// one in tests to point at a mock server.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Config`] when the token is blank, or
+    /// [`Error::Http`] when the HTTP client fails to build.
     pub fn new(base_url: impl Into<String>, token: impl Into<String>) -> Result<Self> {
         let token = token.into();
         if token.trim().is_empty() {
@@ -81,6 +86,12 @@ impl DiscordClient {
     /// Check the bot token: `GET /applications/@me`.
     ///
     /// Returns the application record when the token is valid.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Http`] when the request fails, [`Error::Json`]
+    /// when the body does not parse, or [`Error::DiscordApi`] when Discord
+    /// answers with a non-success status.
     pub async fn check_token(&self) -> Result<ApplicationInfo> {
         let response = self
             .inner
@@ -94,6 +105,12 @@ impl DiscordClient {
 
     /// Bulk-overwrite the global slash commands:
     /// `PUT /applications/{application_id}/commands`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Config`] when the application id is missing, or
+    /// [`Error::Http`], [`Error::Json`], or [`Error::DiscordApi`] when the
+    /// request or its response fails.
     pub async fn register_commands(
         &self,
         commands: &[CommandRegistration],
@@ -119,6 +136,12 @@ impl DiscordClient {
 
     /// Send a follow-up message to a deferred interaction:
     /// `POST /webhooks/{application_id}/{interaction_token}`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Config`] when the application id is missing, or
+    /// [`Error::Http`], [`Error::Json`], or [`Error::DiscordApi`] when the
+    /// request or its response fails.
     pub async fn create_followup(
         &self,
         interaction_token: &str,
@@ -156,10 +179,7 @@ where
         serde_json::from_slice::<T>(&bytes).map_err(Error::Json)
     } else {
         let code = status.as_u16();
-        let body = match response.text().await {
-            Ok(body) => body,
-            Err(_) => String::new(),
-        };
+        let body = response.text().await.unwrap_or_default();
         let truncated: String = body.chars().take(500).collect();
         Err(Error::DiscordApi {
             status: code,

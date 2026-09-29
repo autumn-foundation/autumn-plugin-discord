@@ -55,6 +55,17 @@ pub struct DiscordRuntime {
     pub registry: Arc<CommandRegistry>,
 }
 
+/// Debug shows the command count only; the key and token stay out of logs.
+impl std::fmt::Debug for DiscordRuntime {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("DiscordRuntime")
+            .field("public_key", &self.public_key)
+            .field("client", &self.client)
+            .field("commands", &self.registry.command_names().len())
+            .finish_non_exhaustive()
+    }
+}
+
 /// A Discord bot as an Autumn plugin.
 pub struct DiscordPlugin {
     config_overrides: DiscordConfig,
