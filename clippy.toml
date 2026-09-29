@@ -1,0 +1,4 @@
+# clippy config for autumn-plugin-discord
+
+# Cognitive complexity is fine here; the webhook dispatch reads linearly.
+cognitive-complexity-threshold = 30
