@@ -18,7 +18,7 @@ gateway = ["dep:tokio-tungstenite", "dep:futures-util"]
 
 [dependencies]
 # No default features: the host app selects the Autumn features.
-autumn-web = { version = ">=0.7, <0.8", default-features = false }
+autumn-web = { version = "0.8", default-features = false }
 axum = { version = "0.8", default-features = false }
 http = "1"
 ed25519-dalek = "2.2"

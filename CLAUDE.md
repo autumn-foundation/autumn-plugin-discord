@@ -50,7 +50,10 @@ route answers PINGs directly → `CommandRegistry::dispatch` runs the handler
   gateway in `gateway/tests.rs`, and local TCP stubs for REST.
 - Autumn API questions: ground against the docs MCP
   (`~/workspace/skills/autumn-mcp/bin/mcp.py`) or the vendored
-  `autumn-web-0.7.0` sources — never from memory.
+  `autumn-web-0.8.0` sources — never from memory.
+- `DiscordPlugin::contract` declares the supported `autumn-web` range
+  (`SUPPORTED_AUTUMN_WEB` in `src/plugin.rs`). Change it together with the
+  `autumn-web` requirement in `Cargo.toml`.
 - `Plugin::build` cannot do async work. It installs an `on_startup` hook;
   the hook builds the `DiscordRuntime` and puts it in `AppState` extensions
   via `extension_or_insert_with`. (`AppBuilder::with_extension` values are
