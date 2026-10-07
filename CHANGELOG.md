@@ -3,6 +3,21 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Changed
+
+- Upgrade to `autumn-web` 0.8 (was 0.7). Apps on `autumn-web` 0.7 must stay
+  on 0.1.0 of this plugin.
+
+### Added
+
+- `DiscordPlugin` implements `Plugin::contract`: it declares support for
+  `autumn-web` 0.8. A mismatched framework fails at registration with a
+  diagnostic that names both versions.
+- Tests run the `autumn_web::plugin_conformance` harness on the plugin's
+  routes (`/discord` prefix, route attribution, contract).
+
 ## [0.1.0] - 2026-09-29
 
 ### Added

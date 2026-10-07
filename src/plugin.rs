@@ -30,6 +30,7 @@ use autumn_web::AppState;
 use autumn_web::actuator::IndicatorGroup;
 use autumn_web::app::AppBuilder;
 use autumn_web::plugin::Plugin;
+use autumn_web::plugin_contract::PluginContract;
 use autumn_web::reexports::axum::Router;
 use autumn_web::route_listing::RouteInfo;
 use ed25519_dalek::VerifyingKey;
@@ -40,6 +41,14 @@ use crate::config::DiscordConfig;
 use crate::error::Error;
 use crate::health;
 use crate::verify::public_key_from_hex;
+
+/// The `autumn-web` range this plugin supports, as a Cargo version
+/// requirement.
+///
+/// The crate versions independently of `autumn-web`, so the range is a
+/// literal (not `lockstep_range`). Keep it equal to the `autumn-web`
+/// requirement in `Cargo.toml`.
+const SUPPORTED_AUTUMN_WEB: &str = "0.8";
 
 /// Runtime state shared by the webhook route and handlers.
 ///
@@ -110,6 +119,17 @@ impl Default for DiscordPlugin {
 impl Plugin for DiscordPlugin {
     fn name(&self) -> Cow<'static, str> {
         Cow::Borrowed("autumn-plugin-discord")
+    }
+
+    /// Declare the supported `autumn-web` range. An app that mounts this
+    /// plugin into an incompatible framework fails at registration with a
+    /// diagnostic that names both versions.
+    fn contract(&self) -> Option<PluginContract> {
+        Some(
+            PluginContract::new(env!("CARGO_PKG_NAME"))
+                .plugin_version(env!("CARGO_PKG_VERSION"))
+                .autumn_web(SUPPORTED_AUTUMN_WEB),
+        )
     }
 
     fn build(self, app: AppBuilder) -> AppBuilder {

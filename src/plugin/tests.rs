@@ -68,3 +68,71 @@ fn default_plugin_is_empty() {
         std::borrow::Cow::Borrowed("autumn-plugin-discord")
     );
 }
+
+#[test]
+fn contract_declares_supported_autumn_web_range() {
+    let contract = DiscordPlugin::new().contract().expect("contract declared");
+    assert_eq!(contract.plugin, env!("CARGO_PKG_NAME"));
+    assert_eq!(
+        contract.plugin_version.as_deref(),
+        Some(env!("CARGO_PKG_VERSION"))
+    );
+    assert_eq!(contract.autumn_web.as_deref(), Some(SUPPORTED_AUTUMN_WEB));
+    assert!(contract.experimental_surfaces.is_empty());
+}
+
+#[test]
+fn contract_is_compatible_with_linked_autumn_web() {
+    use autumn_web::plugin_contract::{AUTUMN_WEB_VERSION, ContractVerdict, evaluate};
+    let contract = DiscordPlugin::new().contract().expect("contract declared");
+    assert_eq!(
+        evaluate(&contract, AUTUMN_WEB_VERSION),
+        ContractVerdict::Compatible
+    );
+}
+
+#[test]
+fn contract_rejects_other_autumn_web_minors() {
+    use autumn_web::plugin_contract::{ContractVerdict, evaluate};
+    let contract = DiscordPlugin::new().contract().expect("contract declared");
+    for version in ["0.7.0", "0.9.0", "1.0.0"] {
+        assert!(
+            matches!(
+                evaluate(&contract, version),
+                ContractVerdict::Incompatible(_)
+            ),
+            "autumn-web {version} must be incompatible"
+        );
+    }
+}
+
+#[test]
+fn registration_records_contract_and_routes() {
+    let app = autumn_web::app().plugin(DiscordPlugin::new());
+    assert!(app.has_plugin("autumn-plugin-discord"));
+    assert!(
+        app.plugin_contracts()
+            .iter()
+            .any(|c| c.plugin == env!("CARGO_PKG_NAME"))
+    );
+}
+
+#[test]
+fn plugin_passes_conformance_harness() {
+    use autumn_web::plugin_conformance::{ConformanceConfig, run_conformance};
+    let plugin = DiscordPlugin::new();
+    let contract = plugin.contract().expect("contract declared");
+    let app = autumn_web::app().plugin(plugin);
+    let routes = app.plugin_route_infos().expect("routes build");
+    assert!(
+        routes
+            .iter()
+            .any(|r| r.method == "POST" && r.path == "/discord/interactions"),
+        "webhook route is declared"
+    );
+    let config = ConformanceConfig::new("autumn-plugin-discord")
+        .prefix("/discord")
+        .contract(contract);
+    let report = run_conformance(&config, &routes);
+    assert!(report.passed(), "{}", report.to_text_report());
+}
