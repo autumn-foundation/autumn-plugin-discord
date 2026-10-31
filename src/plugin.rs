@@ -48,7 +48,7 @@ use crate::verify::public_key_from_hex;
 /// The crate versions independently of `autumn-web`, so the range is a
 /// literal (not `lockstep_range`). Keep it equal to the `autumn-web`
 /// requirement in `Cargo.toml`.
-const SUPPORTED_AUTUMN_WEB: &str = "0.8";
+const SUPPORTED_AUTUMN_WEB: &str = "0.9";
 
 /// Runtime state shared by the webhook route and handlers.
 ///

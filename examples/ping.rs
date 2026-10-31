@@ -40,10 +40,13 @@ async fn ping(_ctx: CommandContext) -> AutumnResult<InteractionResponse> {
 
 #[autumn_web::main]
 async fn main() {
-    autumn_web::app()
-        .plugin(
-            DiscordPlugin::new().command(Command::new("ping", "Replies with Pong!").handler(ping)),
-        )
-        .run()
-        .await;
+    Box::pin(
+        autumn_web::app()
+            .plugin(
+                DiscordPlugin::new()
+                    .command(Command::new("ping", "Replies with Pong!").handler(ping)),
+            )
+            .run(),
+    )
+    .await;
 }

@@ -78,7 +78,10 @@ fn contract_declares_supported_autumn_web_range() {
         Some(env!("CARGO_PKG_VERSION"))
     );
     assert_eq!(contract.autumn_web.as_deref(), Some(SUPPORTED_AUTUMN_WEB));
-    assert!(contract.experimental_surfaces.is_empty());
+    assert_eq!(
+        contract.experimental_surfaces,
+        [] as [std::string::String; 0]
+    );
 }
 
 #[test]
@@ -95,7 +98,7 @@ fn contract_is_compatible_with_linked_autumn_web() {
 fn contract_rejects_other_autumn_web_minors() {
     use autumn_web::plugin_contract::{ContractVerdict, evaluate};
     let contract = DiscordPlugin::new().contract().expect("contract declared");
-    for version in ["0.7.0", "0.9.0", "1.0.0"] {
+    for version in ["0.8.0", "0.10.0", "1.0.0"] {
         assert!(
             matches!(
                 evaluate(&contract, version),

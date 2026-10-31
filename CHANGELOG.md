@@ -7,6 +7,10 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Support `autumn-web` 0.9. The plugin now needs `autumn-web` 0.9.
+
+### Changed
+
 - Upgrade to `autumn-web` 0.8 (was 0.7). Apps on `autumn-web` 0.7 must stay
   on 0.1.0 of this plugin.
 
