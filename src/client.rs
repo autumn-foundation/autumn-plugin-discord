@@ -19,6 +19,9 @@ pub const API_BASE: &str = "https://discord.com/api/v10";
 /// Request timeout for REST calls.
 const REQUEST_TIMEOUT: Duration = Duration::from_secs(10);
 
+/// `User-Agent` for REST calls. It names the crate version from `Cargo.toml`.
+const USER_AGENT: &str = concat!("autumn-plugin-discord/", env!("CARGO_PKG_VERSION"));
+
 /// The bot's own application record, from `GET /applications/@me`.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ApplicationInfo {
@@ -65,7 +68,7 @@ impl DiscordClient {
         }
         let inner = reqwest::Client::builder()
             .timeout(REQUEST_TIMEOUT)
-            .user_agent("autumn-plugin-discord/0.1.0")
+            .user_agent(USER_AGENT)
             .build()
             .map_err(Error::Http)?;
         Ok(Self {
