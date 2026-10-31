@@ -81,3 +81,11 @@ async fn register_commands_round_trips() {
 fn empty_token_rejects() {
     DiscordClient::new(API_BASE, "  ").expect_err("empty token rejects");
 }
+
+#[test]
+fn user_agent_names_the_crate_version() {
+    assert_eq!(
+        USER_AGENT,
+        format!("autumn-plugin-discord/{}", env!("CARGO_PKG_VERSION"))
+    );
+}
