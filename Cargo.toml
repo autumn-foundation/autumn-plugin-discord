@@ -1,8 +1,8 @@
 [package]
 name = "autumn-plugin-discord"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.97"
 description = "Autumn plugin: a Discord bot framework — slash commands as Autumn routes, signed interaction webhooks, REST client, and a minimal gateway client."
 license = "Apache-2.0"
 repository = "https://github.com/madmax983/autumn-plugin-discord"
@@ -18,7 +18,7 @@ gateway = ["dep:tokio-tungstenite", "dep:futures-util"]
 
 [dependencies]
 # No default features: the host app selects the Autumn features.
-autumn-web = { version = "0.9", default-features = false }
+autumn-web = { version = "0.10", default-features = false }
 axum = { version = "0.8", default-features = false }
 http = "1"
 ed25519-dalek = "2.2"
