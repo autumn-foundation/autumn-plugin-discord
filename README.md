@@ -24,7 +24,7 @@ public_key = "<64 hex chars from the developer portal>"
 export DISCORD_BOT_TOKEN="<bot token from the developer portal>"
 ```
 
-```rust
+```rust,no_run
 use autumn_plugin_discord::{
     Command, CommandContext, DiscordPlugin, InteractionResponse, MessagePayload,
 };
@@ -70,7 +70,8 @@ Then, in the [Discord developer portal](https://discord.com/developers/applicati
 Answer within 3 seconds, or acknowledge and follow up later:
 
 ```rust
-use autumn_plugin_discord::{InteractionResponse, MessagePayload};
+use autumn_plugin_discord::{CommandContext, InteractionResponse, MessagePayload};
+use autumn_web::prelude::*;
 
 async fn slow(ctx: CommandContext) -> AutumnResult<InteractionResponse> {
     let token = ctx.interaction.token.clone();
