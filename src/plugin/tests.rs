@@ -98,7 +98,7 @@ fn contract_is_compatible_with_linked_autumn_web() {
 fn contract_rejects_other_autumn_web_minors() {
     use autumn_web::plugin_contract::{ContractVerdict, evaluate};
     let contract = DiscordPlugin::new().contract().expect("contract declared");
-    for version in ["0.8.0", "0.10.0", "1.0.0"] {
+    for version in ["0.9.0", "0.11.0", "1.0.0"] {
         assert!(
             matches!(
                 evaluate(&contract, version),
