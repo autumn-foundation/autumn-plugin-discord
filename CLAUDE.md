@@ -37,6 +37,8 @@ route answers PINGs directly → `CommandRegistry::dispatch` runs the handler
 
 ## Rules
 
+- README Rust snippets are doctests. Make them compile; use `no_run`, not `ignore`.
+  `tests/doc_snippets.rs` checks the TOML snippets and the version pins in the docs.
 - Never put the bot token in `autumn.toml`, in code, or in logs. It travels
   only through `DISCORD_BOT_TOKEN`.
 - `unsafe_code = "forbid"` crate-wide (also in tests — use fixed test

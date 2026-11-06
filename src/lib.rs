@@ -74,3 +74,8 @@ pub use types::{
     InteractionType, Member, MessagePayload, User,
 };
 pub use verify::{SIGNATURE_HEADER, TIMESTAMP_HEADER, public_key_from_hex, verify_interaction};
+
+/// Compiles the Rust snippets of the README as doctests.
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+pub struct ReadmeDoctests;
